@@ -147,7 +147,12 @@ class NmapES:
 			if h.tag == 'host':
 				if h.attrib['endtime']:
 					dict_item['time'] = time.strftime('%a %b %d %H:%M:%S %Y', time.gmtime(float(h.attrib['endtime'])))
-			
+			for c in h:
+				if c.tag == 'os':
+					for names in c.getchildren():
+						if names.tag == 'osmatch':
+							dict_item['os'] = names.attrib['name']
+							break
 			for c in h:
 				if c.tag == 'address':
 					if c.attrib['addr'] and c.attrib['addrtype'] == 'ipv4':
@@ -156,10 +161,6 @@ class NmapES:
 					for names in c.getchildren():
 						if names.attrib['name']:
 							dict_item['hostname'] = names.attrib['name']
-				elif c.tag == 'os':
-					for names in c.getchildren():
-						if names.tag == 'osmatch':
-							dict_item['os'] = names.attrib['name']
 				elif c.tag == 'ports':
 					for port in c.getchildren():
 						dict_itemb = {}
