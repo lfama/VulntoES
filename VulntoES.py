@@ -156,6 +156,10 @@ class NmapES:
 					for names in c.getchildren():
 						if names.attrib['name']:
 							dict_item['hostname'] = names.attrib['name']
+				elif c.tag == 'os':
+					for names in c.getchildren():
+						if names.tag == 'osmatch':
+							dict_item['os'] = names.attrib['name']
 				elif c.tag == 'ports':
 					for port in c.getchildren():
 						dict_itemb = {}
