@@ -199,27 +199,43 @@ class NiktoES:
 
 	def toES(self):
 		"Sends each item to Elasticsearch as a unique document"
+		#for item in self.root.iter('item'):
+			#dict_item = {}
+			#dict_item['scanner'] = 'nikto'
+			#dict_item['osvdbid'] = item.attrib['osvdbid']
+			#dict_item['method'] =  item.attrib['method']
+			#for c in item:
+				#if c.tag == 'description':
+					#dict_item['description'] = c.text
+				#elif c.tag == 'uri':
+					#dict_item['uri'] = c.text
+				#elif c.tag == 'namelink':
+					##regex = re.compile(":\/\/([\w]*):")
+					#regex = re.compile("(https?)://([.0-9a-zA-Z-]+)(/?.*?)([^/]*)")
+					##print regex.search(c.text).groups()
+					#dict_item['hostname'] = regex.search(c.text).groups()[1]
+					#dict_item['srcport'] = regex.search(c.text).groups()[3][1:]
+					#dict_item['site'] = regex.search(c.text).groups()[0] + '://' +  regex.search(c.text).groups()[1]
+				#elif c.tag == 'iplink':
+					#regex = re.compile("((?:[0-9]{1,3}\.){3}[0-9]{1,3})")
+					#dict_item['srcip'] = regex.search(c.text).groups()[0]
+			#self.es.index(index=self.index_name,doc_type="vuln", body=json.dumps(dict_item))
+		for obj in self.root.iter('statistics'):
+		      dict_item = {}
+		      dict_item['scanner'] = 'nikto'
+		      dict_item['time'] = obj.attrib['endtime']
+		for obj in self.root.iter('ssl'):
+		      dict_item['SSL_ciphers'] = obj.attrib['ciphers']
+		      dict_item['SSL_issuers'] = obj.attrib['issuers']
 		for item in self.root.iter('item'):
-			dict_item = {}
-			dict_item['scanner'] = 'nikto'
-			dict_item['osvdbid'] = item.attrib['osvdbid']
-			dict_item['method'] =  item.attrib['method']
-			for c in item:
-				if c.tag == 'description':
-					dict_item['description'] = c.text
-				elif c.tag == 'uri':
-					dict_item['uri'] = c.text
-				elif c.tag == 'namelink':
-					#regex = re.compile(":\/\/([\w]*):")
-					regex = re.compile("(https?)://([.0-9a-zA-Z-]+)(/?.*?)([^/]*)")
-					#print regex.search(c.text).groups()
-					dict_item['hostname'] = regex.search(c.text).groups()[1]
-					dict_item['srcport'] = regex.search(c.text).groups()[3][1:]
-					dict_item['site'] = regex.search(c.text).groups()[0] + '://' +  regex.search(c.text).groups()[1]
-				elif c.tag == 'iplink':
-					regex = re.compile("((?:[0-9]{1,3}\.){3}[0-9]{1,3})")
-					dict_item['srcip'] = regex.search(c.text).groups()[0]
-			self.es.index(index=self.index_name,doc_type="vuln", body=json.dumps(dict_item))
+		      for c in item:
+			  if c.tag == "description":
+			    dict_item['description'] = c.text
+			  if c.tag == 'namelink':
+			    dict_item['link'] = c.text
+		      self.es.index(index=self.index_name,doc_type="vuln", body=json.dumps(dict_item))
+		      print json.dumps(dict_item)
+		     
 
 
 class OpenVasES:
